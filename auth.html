@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journify - Login/Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-panel">
+                <h1>Journify 🚀</h1>
+                <p>Kumpulkan dan lacak aktivitas, mood, dan idemu dalam satu tempat terpadu.</p>
+            </div>
+            <div class="form-panel">
+                <form id="login-form">
+                    <h2>Selamat Datang Kembali!</h2>
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="contoh@email.com" required>
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                    <button type="submit">Login</button>
+                    <p id="login-error" class="error-message"></p>
+                </form>
+
+                <form id="register-form" class="hidden">
+                    <h2>Buat Akun Baru</h2>
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="contoh@email.com" required>
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Minimal 6 karakter" required>
+                    <button type="submit">Register</button>
+                    <p id="register-error" class="error-message"></p>
+                </form>
+
+                <p id="auth-switcher">Belum punya akun? <a href="#" id="show-register-link">Register di sini</a></p>
+                <p id="auth-switcher-login" class="hidden">Sudah punya akun? <a href="#" id="show-login-link">Login di sini</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="auth.js"></script>
+</body>
+
+</html>

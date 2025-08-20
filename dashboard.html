@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journify - Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrAfter.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/tmkn3fjkqruhxrxzucgpa2cmmd33kveh6xqfta2nqc1aopvv/tinymce/6/tinymce.min.js"
+        referrerpolicy="origin"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+</head>
+
+<body>
+    <div id="app-container">
+        <header>
+            <h1>Journify</h1>
+            <div id="user-info">
+                <span id="user-display">Loading...</span>
+                <button id="edit-name-btn" title="Ubah Nama Tampilan">✏️</button>
+                <button id="theme-toggle" title="Ubah Tema">☀️</button>
+                <button id="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="journal-input-card card">
+                <h2>Catatan Baru</h2>
+                <div class="input-tabs">
+                    <button class="input-tab-btn active" data-type="mood">Mood</button>
+                    <button class="input-tab-btn" data-type="activity">Aktivitas</button>
+                    <button class="input-tab-btn" data-type="idea">Ide</button>
+                </div>
+                <button id="show-idea-board-btn" class="btn-secondary">🚀 Lihat Papan Ide</button>
+
+
+                <div class="input-forms-container">
+                    <div id="mood-form" class="input-form">
+                        <label>Bagaimana moodmu?</label>
+                        <div class="mood-slider-container">
+                            <input type="range" id="mood-slider" min="-2" max="2" value="0">
+                            <div class="mood-emojis">
+                                <span>😢</span><span>🙁</span><span>😐</span><span>🙂</span><span>😊</span>
+                            </div>
+                        </div>
+                        <button id="record-mood-btn">Catat Mood</button>
+                    </div>
+
+                    <div id="activity-form" class="input-form hidden">
+                        <label for="activity-name">Apa yang kamu lakukan?</label>
+                        <input type="text" id="activity-name" placeholder="Nama aktivitas...">
+                        <select id="activity-category">
+                            <option value="Pekerjaan">Pekerjaan</option>
+                            <option value="Belajar">Belajar</option>
+                            <option value="Pribadi">Pribadi</option>
+                            <option value="Istirahat">Istirahat</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        <input type="text" id="activity-tags" placeholder="Tag (pisahkan koma), cth: kerja, penting">
+                        <button id="start-activity-btn">Mulai Aktivitas</button>
+                    </div>
+
+                    <div id="idea-form" class="input-form hidden">
+                        <label for="idea-title">Ide apa yang muncul?</label>
+                        <input type="text" id="idea-title" placeholder="Judul ide..." required>
+                        <textarea id="idea-notes" placeholder="Deskripsi ide..."></textarea>
+                        <input type="text" id="idea-tags" placeholder="Tag (pisahkan koma), cth: proyek, inspirasi">
+                        <label for="idea-deadline">Deadline (Opsional):</label>
+                        <input type="date" id="idea-deadline">
+                        <button id="record-idea-btn">Catat Ide</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card card">
+                <h2>Ringkasan Hari Ini</h2>
+                <div class="summary-content">
+                    <div class="summary-chart-container">
+                        <canvas id="summary-chart"></canvas>
+                    </div>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Waktu Produktif</span>
+                            <span class="stat-value" id="summary-time">0 jam 0 menit</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Aktivitas Selesai</span>
+                            <span class="stat-value" id="summary-tasks">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-utility-card card">
+                <h2>Buat Laporan Harian</h2>
+                <div class="text-utility-content">
+                    <textarea id="text-utility-output"
+                        placeholder="Klik 'Buat Laporan' untuk membuat ringkasan harimu..." rows="10"
+                        readonly></textarea>
+                    <div class="text-utility-actions">
+                        <button id="process-text-btn">Buat Laporan</button>
+                        <button id="copy-text-btn" class="btn-secondary">Salin Laporan</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-container card">
+                <div class="timeline-header">
+                    <button id="prev-day-btn" class="btn-secondary">◀</button>
+                    <h2 id="timeline-date-display">Memuat...</h2>
+                    <button id="next-day-btn" class="btn-secondary">▶</button>
+                </div>
+                <div class="timeline-toolbar">
+                    <input type="search" id="timeline-search" placeholder="Cari di catatan...">
+                </div>
+                <div id="timeline-list" class="timeline-list">
+                </div>
+            </div>
+
+            <div id="idea-board-container" class="card hidden">
+                <div class="idea-board-header">
+                    <h2>Papan Proyek Ide</h2>
+                    <button id="back-to-timeline-btn" class="btn-secondary">Kembali ke Timeline</button>
+                </div>
+                <div class="idea-board">
+                    <div class="idea-column">
+                        <h3>Pending</h3>
+                        <div class="idea-card-container" id="idea-col-pending" data-status="pending">
+                        </div>
+                    </div>
+                    <div class="idea-column">
+                        <h3>In Progress</h3>
+                        <div class="idea-card-container" id="idea-col-in-progress" data-status="in-progress">
+                        </div>
+                    </div>
+                    <div class="idea-column">
+                        <h3>Selesai</h3>
+                        <div class="idea-card-container" id="idea-col-done" data-status="done">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="insights-container" class="card">
+            <h2>Wawasan</h2>
+            <div class="insight-item">
+                <h3>Perubahan Mood per Kategori</h3>
+                <p id="mood-change-content">Data tidak tersedia.</p>
+            </div>
+            <div class="insight-item">
+                <h3>Aktivitas Paling Sering</h3>
+                <p id="top-activity-content">Data tidak tersedia.</p>
+            </div>
+            <div class="insight-item">
+                <h3>Ide & Mood</h3>
+                <p id="idea-mood-content">Data tidak tersedia.</p>
+            </div>
+            <div class="chart-section">
+                <h3>Grafik Mood Harian</h3>
+                <div class="chart-controls" id="mood-chart-controls">
+                    <button class="chart-period-btn active" data-period="day">Harian (per Jam)</button>
+                    <button class="chart-period-btn" data-period="week">Mingguan</button>
+                    <button class="chart-period-btn" data-period="month">Bulanan</button>
+                </div>
+                <canvas id="mood-chart"></canvas>
+            </div>
+            <div class="chart-section ">
+                <h3>Grafik Aktivitas per Kategori</h3>
+                <canvas id="activity-chart"></canvas>
+            </div>
+            <div class="chart-section">
+                <h3>Waktu per Kategori</h3>
+                <div class="chart-controls" id="duration-chart-controls">
+                    <button class="chart-period-btn active" data-period="week">Mingguan</button>
+                    <button class="chart-period-btn" data-period="month">Bulanan</button>
+                </div>
+                <canvas id="duration-category-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-name-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Ubah Nama Tampilan</h2>
+            <form id="edit-name-form">
+                <input type="text" id="display-name-input" placeholder="Nama baru Anda..." required>
+                <div class="modal-buttons">
+                    <button type="button" id="cancel-edit-name" class="btn-secondary">Batal</button>
+                    <button type="submit">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="idea-details-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 id="idea-modal-title">Judul Ide</h2>
+            <div id="idea-modal-details" class="idea-details-content">
+            </div>
+            <div class="modal-buttons">
+                <button type="button" id="close-idea-modal" class="btn-secondary">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

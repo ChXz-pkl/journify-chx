@@ -1,0 +1,842 @@
+/* style.css */
+
+/* 1. Global Setup & Variables */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Light Mode */
+    --bg-primary: #F0F2F5;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #E9ECEF;
+    --text-primary: #212529;
+    --text-secondary: #6C757D;
+    --accent-primary: #4a90e2;
+    --accent-hover: #3a75c1;
+    --border-color: #DEE2E6;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode {
+    /* Dark Mode */
+    --bg-primary: #121212;
+    --bg-secondary: #1E1E1E;
+    --bg-tertiary: #2a2a2a;
+    --text-primary: #EAEAEA;
+    --text-secondary: #A0A0A0;
+    --accent-primary: #58a6ff;
+    --accent-hover: #3a75c1;
+    --border-color: #333333;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 2. Tombol & Elemen Umum */
+button {
+    background-color: var(--accent-primary);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-primary {
+    background-color: var(--accent-primary);
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: #a71d2a;
+}
+
+input,
+select,
+textarea {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.card {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+h1 { font-size: 2rem; font-weight: 700; }
+h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.25rem; }
+h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+/* 3. Halaman Landing & Autentikasi */
+.landing-page .landing-header {
+    padding: 1rem 2rem;
+    background-color: var(--bg-secondary);
+}
+.hero-section {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.auth-card {
+    display: flex;
+    max-width: 900px;
+    width: 100%;
+    margin: 1rem;
+}
+.auth-panel {
+    width: 45%;
+    padding: 3rem;
+    background: linear-gradient(145deg, var(--accent-hover), var(--accent-primary));
+    color: #FFFFFF;
+}
+.form-panel {
+    width: 55%;
+    padding: 3rem;
+}
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* 4. Dashboard */
+header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+header #user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+header button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+}
+header button#logout-btn {
+    font-size: 1rem;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* 5. Input Forms */
+.input-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+.input-tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+.input-tab-btn.active {
+    color: var(--accent-primary);
+    border-bottom: 2px solid var(--accent-primary);
+}
+.input-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.mood-slider-container .mood-emojis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    padding: 0 0.5rem;
+}
+.active-activity-display {
+    padding: 1rem;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.active-activity-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.content-card {
+    background-color: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 8px;
+}
+.details {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.entry-actions {
+    float: right;
+}
+.entry-actions button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.2rem;
+}
+.tag {
+    background-color: var(--bg-secondary);
+    color: var(--accent-primary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    display: inline-block;
+    margin-top: 0.5rem;
+    margin-right: 0.25rem;
+}
+
+/* 7. Insights & Charts */
+/* Ganti aturan #insights-container yang lama dengan ini: */
+#insights-container {
+    max-width: 1600px;
+    margin: 1.5rem 90px; /* Jarak atas/bawah dan tetap di tengah */
+    padding: 1.5rem 2rem; /* Atur ulang padding agar pas */
+}
+
+/* Tambahkan ini untuk membuat 2 kolom di layar laptop/desktop */
+@media (min-width: 992px) {
+    #insights-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* style.css */
+/* (Tambahkan di bagian paling akhir file) */
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+.insight-item p {
+    color: var(--text-secondary);
+}
+.chart-section {
+    margin-top: 8rem;
+    min-width: 0;
+    position: relative; /* Penting untuk responsivitas Chart.js */
+    height: 350px;      /* Beri ketinggian yang pasti */
+/* Properti Flexbox untuk menyusun item ke bawah */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Perbaikan untuk mengisi ruang kosong di bawah grafik */
+.chart-section > .chartjs-size-monitor,
+.chart-section > canvas {
+    flex-grow: 1;
+    min-height: 0; /* Mencegah masalah ukuran pada beberapa browser */
+}
+
+/* 8. Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+.modal-content {
+    background-color: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+}
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* 9. Summary Card Styles (Tambahkan ini di akhir) */
+.summary-card h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.summary-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2rem;
+}
+
+.summary-chart-container {
+    width: 150px;
+    height: 150px;
+}
+
+.summary-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+/* style.css */
+
+/* ... (kode CSS yang sudah ada) ... */
+
+/* 10. Chart Controls (Tambahkan ini di akhir) */
+.chart-controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+    position: relative; /* <-- TAMBAHKAN INI */
+    z-index: 10;      /* <-- DAN INI */
+}
+
+.chart-period-btn {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.chart-period-btn:hover {
+    background-color: var(--border-color);
+}
+
+.chart-period-btn.active {
+    background-color: var(--accent-primary);
+    color: #FFFFFF;
+    border-color: var(--accent-primary);
+}
+
+/* style.css */
+
+/* 11. Idea Board Styles (Tambahkan ini di akhir) */
+#show-idea-board-btn {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.idea-board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.idea-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.idea-column h3 {
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.idea-card-container {
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    padding: 0.75rem;
+    min-height: 200px;
+}
+
+.idea-card {
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    margin-bottom: 1rem;
+    cursor: grab;
+}
+
+.idea-card:active {
+    cursor: grabbing;
+}
+
+.idea-card-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.idea-card-details {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* style.css */
+
+/* 12. Insight Details Styles (Tambahkan ini di akhir) */
+.mood-change-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.mood-change-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mood-up, .mood-down, .mood-neutral {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.mood-up {
+    color: var(--success-color);
+}
+
+.mood-down {
+    color: var(--danger-color);
+}
+
+.mood-neutral {
+    color: var(--text-secondary);
+}
+
+/* style.css */
+/* 13. Timeline Header (Tambahkan ini di akhir) */
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-header h2 {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+}
+
+.timeline-header button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+/* style.css */
+/* (Tambahkan di bagian paling akhir file) */
+
+button:disabled {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* style.css */
+
+/* --- START: BAGIAN CSS TIMELINE LENGKAP --- */
+
+.timeline-toolbar {
+    margin-bottom: 1.5rem;
+}
+
+.timeline-list {
+    position: relative;
+}
+
+.empty-state {
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Grup per Jam (Accordion) */
+.hourly-group {
+    position: relative;
+    padding-left: 50px; /* Jarak untuk garis dan waktu */
+    margin-bottom: 0.5rem;
+}
+
+/* Garis vertikal utama */
+.hourly-group::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 2px;
+    height: calc(100% - 20px);
+    background-color: var(--border-color);
+}
+
+.hourly-header {
+    width: 100%;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.hourly-header:hover {
+    background-color: var(--border-color);
+}
+
+.hour-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 60px;
+}
+
+.hour-summary {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    flex-grow: 1;
+}
+
+.toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.hourly-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+/* Style saat accordion dibuka */
+.hourly-group.active .hourly-content {
+    max-height: 1000px; /* Nilai besar untuk menampung konten */
+}
+
+.hourly-group.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+
+/* Item Entri Individual di dalam Timeline */
+.timeline-item {
+    position: relative; /* Ini PENTING agar titik dan waktu menempel */
+    margin-bottom: 1rem;
+}
+
+/* Label Waktu (HH:mm) */
+.timeline-item::before {
+    content: attr(data-time);
+    position: absolute;
+    top: 5px;
+    left: -55px;
+    width: 45px;
+    text-align: right;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+/* Titik di Garis Waktu */
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: -27px; /* Sesuaikan agar pas di garis */
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent-primary); /* Warna titiknya */
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+    z-index: 1;
+}
+
+/* style.css (tambahkan di akhir) */
+.idea-details-content {
+    margin-top: 1.5rem;
+    line-height: 1.7;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.idea-details-content p {
+    margin-bottom: 1rem;
+}
+
+.idea-details-content ul, .idea-details-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 1rem;
+}
+
+
+/* --- END: BAGIAN CSS TIMELINE LENGKAP --- */
+
+/* =============================================== */
+/* --- START: ATURAN TAMPILAN HP (RESPONSIVE) --- */
+/* =============================================== */
+
+@media (max-width: 768px) {
+    /* --- 1. Pengaturan Global & Font --- */
+    body {
+        font-size: 15px; /* Sedikit perbesar font dasar agar lebih mudah dibaca */
+    }
+
+    .container {
+        margin: 1rem auto; /* Kurangi margin atas/bawah container utama */
+        gap: 1.25rem;      /* Kurangi jarak antar card */
+        padding: 0 0.75rem; /* Kurangi padding samping agar konten lebih lega */
+    }
+    
+    .card {
+        padding: 1.25rem; /* Sesuaikan padding di dalam card */
+    }
+
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+    .card h2 { font-size: 1.15rem; }
+    h3 { font-size: 1.05rem; }
+
+    input, select, button, .btn-secondary, .btn-danger {
+        font-size: 0.95rem; /* Konsistensikan ukuran font elemen form */
+        padding: 0.75rem 1rem; /* Buat tombol dan input lebih mudah disentuh */
+    }
+
+    /* --- 2. Header --- */
+    header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem; /* Beri jarak lebih antar elemen header */
+        text-align: center;
+    }
+    header #user-info {
+        flex-wrap: wrap; /* Izinkan tombol di header pindah baris jika tidak muat */
+        justify-content: center;
+    }
+
+    /* --- 3. Card Ringkasan (Summary) --- */
+    .summary-content {
+        flex-direction: column; /* Ubah layout dari samping-sampingan menjadi atas-bawah */
+        gap: 1.5rem;
+        align-items: center; /* Pusatkan item */
+    }
+
+    .summary-chart-container {
+        width: 130px; /* Perkecil sedikit chart donat */
+        height: 130px;
+    }
+
+    /* --- 4. Tampilan Timeline --- */
+    .timeline-header {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .timeline-header button {
+        padding: 0.5rem 1rem;
+    }
+    /* Kurangi padding kiri agar timeline tidak terlalu menjorok ke dalam */
+    .hourly-group {
+        padding-left: 40px; 
+    }
+    .timeline-item::before {
+        left: -45px; /* Sesuaikan posisi label waktu (HH:mm) */
+    }
+    .timeline-item::after {
+        left: -22px; /* Sesuaikan posisi titik di garis waktu */
+    }
+
+
+    /* --- 5. Tampilan Wawasan & Grafik (Insights & Charts) --- */
+    #insights-container {
+        margin: 1rem; /* Ganti margin besar menjadi lebih kecil */
+        padding: 1.25rem;
+    }
+
+    .chart-section {
+        height: 300px;
+        margin-top: 3rem !important; /* Kurangi drastis margin atas grafik yang terlalu besar */
+    }
+
+    /* --- 6. Halaman Autentikasi --- */
+    .auth-card {
+        flex-direction: column;
+        margin: 1rem;
+    }
+    .auth-panel, .form-panel {
+        width: 100%;
+        padding: 2rem;
+    }
+
+    /* --- 7. Papan Ide --- */
+    .idea-board {
+        grid-template-columns: 1fr; /* Papan ide jadi 1 kolom, sudah benar */
+    }
+}
+
+/* style.css */
+/* (Tambahkan di bagian paling akhir file) */
+
+/* --- START: STYLE UNTUK UTILITAS TEKS --- */
+
+.text-utility-card h2 {
+    text-align: center;
+}
+
+.text-utility-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 kolom di mobile */
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Aturan untuk 2 kolom di layar lebar */
+@media (min-width: 768px) {
+    .text-utility-grid {
+        grid-template-columns: 1fr 1fr; /* 2 kolom di tablet/laptop */
+    }
+}
+
+.text-input-area,
+.text-output-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.text-utility-grid textarea {
+    resize: vertical; /* Izinkan user mengubah tinggi textarea */
+    height: 150px;
+}
+
+/* Style khusus untuk area output */
+#text-utility-output:read-only {
+    background-color: var(--bg-primary);
+    cursor: default;
+}
+
+/* --- END: STYLE UNTUK UTILITAS TEKS --- */
