@@ -33,7 +33,10 @@ let currentlyDisplayedDate = dayjs();
 let activityChartInstance, moodChartInstance, summaryChartInstance, durationChartInstance;
 let currentMoodChartPeriod = 'day';
 let currentDurationChartPeriod = 'week';
-
+let allIdeas = [];
+let unsubscribeIdeasListener = null;
+let allTimelineEntries = [];
+let unsubscribeAllEntriesListener = null;
 // Element Selectors
 const timelineList = document.getElementById('timeline-list');
 const timelineSearchInput = document.getElementById('timeline-search');
@@ -71,6 +74,8 @@ onAuthStateChanged(auth, (user) => {
         currentUserId = user.uid;
         userDisplay.textContent = user.displayName || user.email;
         listenForEntriesForDate(currentlyDisplayedDate);
+        listenForAllTimelineEntries(); // <-- Listener baru untuk data grafik
+        listenForAllIdeas();
         initializeEditor();
         setupEventListeners();
         const savedTheme = localStorage.getItem('theme') || 'light';
@@ -125,50 +130,61 @@ function setupEventListeners() {
     const textInput = document.getElementById('text-utility-input');
     const textOutput = document.getElementById('text-utility-output');
 
-    // Event saat tombol "Jadikan Teks" diklik
+
+
     processTextBtn.addEventListener('click', () => {
         const userName = userDisplay.textContent;
         const reportDate = currentlyDisplayedDate.format('dddd, D MMMM YYYY');
-        const entriesToReport = [...allEntries].reverse(); // Salin & balik urutan jadi kronologis
 
-        // 2. Buat header laporan
-        let reportText = `*Laporan Kegiatan Harian*\n`;
+        // Menggunakan allEntries yang sudah terfilter untuk hari yang ditampilkan
+        const entriesToReport = [...allEntries].sort((a, b) => a.timestamp.toDate() - b.timestamp.toDate());
+
+        let reportText = `*Laporan Harian Journify*\n`;
+        reportText += `---------------------------\n`;
         reportText += `Nama: ${userName}\n`;
         reportText += `Tanggal: ${reportDate}\n\n`;
-        reportText += `------------------------------------\n\n`;
 
-        // 3. Loop melalui setiap entri dan format
         if (entriesToReport.length === 0) {
-            reportText += "Tidak ada aktivitas yang tercatat pada hari ini.";
+            reportText += "Tidak ada catatan untuk hari ini.";
         } else {
             entriesToReport.forEach(entry => {
                 const time = dayjs(entry.timestamp.toDate()).format('HH:mm');
 
                 if (entry.type === 'mood') {
-                    reportText += `[${time}] Mood: ${entry.content} ${getMoodEmoji(entry.content)}\n`;
+                    reportText += `[${time}] - 😊 *Mood Dicatat*\n`;
+                    reportText += `   - Perasaan: ${getMoodEmoji(entry.content)} ${entry.content}\n\n`;
                 }
                 else if (entry.type === 'activity') {
-                    reportText += `[${time}] Aktivitas: ${entry.content}\n`;
+                    const status = entry.extra.status === 'completed' ? 'Selesai' : 'Berjalan';
+                    reportText += `[${time}] - 🏃 *Aktivitas: ${entry.content}* (${status})\n`;
+                    reportText += `   - Kategori: ${entry.extra.category}\n`;
                     if (entry.extra.status === 'completed') {
                         const startTime = dayjs(entry.timestamp.toDate()).format('HH:mm');
                         const endTime = dayjs(entry.extra.endTime.toDate()).format('HH:mm');
                         reportText += `   - Durasi: ${entry.extra.duration} menit (dari ${startTime} s/d ${endTime})\n`;
-                        reportText += `   - Kategori: ${entry.extra.category}\n`;
                     }
-                    if (entry.extra.relatedIdeas && entry.extra.relatedIdeas.length > 0) {
-                        reportText += `   - Ide terkait:\n`;
-                        entry.extra.relatedIdeas.forEach(idea => {
-                            reportText += `     • ${idea.title}\n`;
-                        });
+                    if (entry.extra.tags && entry.extra.tags.length > 0) {
+                        reportText += `   - Tag: #${entry.extra.tags.join(', #')}\n`;
                     }
+                    reportText += `\n`;
                 }
-                reportText += `\n`; // Beri spasi antar entri
+                else if (entry.type === 'idea') {
+                    reportText += `[${time}] - 💡 *Ide Dicatat: ${entry.content}*\n`;
+                    if (entry.extra.deadline) {
+                        reportText += `   - Deadline: ${dayjs(entry.extra.deadline).format('D MMM YYYY')}\n`;
+                    }
+                    if (entry.extra.tags && entry.extra.tags.length > 0) {
+                        reportText += `   - Tag: #${entry.extra.tags.join(', #')}\n`;
+                    }
+                    reportText += `\n`;
+                }
             });
         }
 
-        // 4. Tampilkan hasilnya
         textOutput.value = reportText;
     });
+
+
 
     // Event saat tombol "Salin Teks" diklik
     copyTextBtn.addEventListener('click', () => {
@@ -388,6 +404,22 @@ function applyTheme(theme) {
         initializeEditor();
     }
 }
+function listenForAllIdeas() {
+    if (unsubscribeIdeasListener) unsubscribeIdeasListener();
+
+    const q = query(
+        collection(db, "entries"),
+        where("userId", "==", currentUserId),
+        where("type", "==", "idea"),
+        orderBy("timestamp", "desc")
+    );
+
+    unsubscribeIdeasListener = onSnapshot(q, (snapshot) => {
+        allIdeas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Panggil render Papan Ide setiap kali ada perubahan data ide
+        renderIdeaBoard();
+    });
+}
 
 function renderTimeline() {
     if (activityTimerInterval) clearInterval(activityTimerInterval);
@@ -471,14 +503,15 @@ function renderIdeaBoard() {
         document.getElementById(`idea-col-${status}`).innerHTML = '';
     });
 
-    const ideas = allEntries.filter(e => e.type === 'idea');
-    ideas.forEach(idea => {
-        let detailsContent = [];
-        if (idea.extra.moodAtCreation) {
-            detailsContent.push(`Mood: ${getMoodEmoji(idea.extra.moodAtCreation)}`);
-        }
-        if (idea.extra.deadline) {
-            detailsContent.push(`Deadline: ${dayjs(idea.extra.deadline).format('D MMM')}`);
+    // Menggunakan variabel allIdeas
+    allIdeas.forEach(idea => {
+        let status = idea.extra.status || 'pending';
+        const deadline = idea.extra.deadline ? dayjs(idea.extra.deadline) : null;
+
+        // Logika: Jika deadline sudah lewat dan statusnya belum 'done',
+        // maka otomatis dianggap 'pending'.
+        if (deadline && deadline.isBefore(dayjs(), 'day') && status !== 'done') {
+            status = 'pending';
         }
 
         const ideaCardHTML = `
@@ -487,7 +520,6 @@ function renderIdeaBoard() {
                 ${detailsContent.length > 0 ? `<p class="idea-card-details">${detailsContent.join('<br>')}</p>` : ''}
             </div>`;
 
-        const status = idea.extra.status || 'pending';
         document.getElementById(`idea-col-${status}`).innerHTML += ideaCardHTML;
     });
 }
@@ -651,7 +683,7 @@ function startActivityTimer(entryId, startTime) {
 
 // 10. INSIGHTS & CHARTS
 function updateInsights() {
-    const activities = allEntries.filter(e => e.type === 'activity' && e.extra.status === 'completed');
+    const activities = allTimelineEntries.filter(e => e.type === 'activity' && e.extra.status === 'completed');
     const ideas = allEntries.filter(e => e.type === 'idea');
 
     // Insight 1: Mood change
@@ -706,6 +738,19 @@ function updateInsights() {
 
     drawMoodChart();
     drawActivityChart();
+}
+function listenForAllTimelineEntries() {
+    if (unsubscribeAllEntriesListener) unsubscribeAllEntriesListener();
+    const q = query(
+        collection(db, "entries"),
+        where("userId", "==", currentUserId),
+        where("type", "in", ["mood", "activity"])
+    );
+    unsubscribeAllEntriesListener = onSnapshot(q, (snapshot) => {
+        allTimelineEntries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Perbarui semua wawasan/grafik setiap ada data baru
+        updateInsights();
+    });
 }
 
 function updateSummaryCard() {
@@ -788,7 +833,7 @@ function updateSummaryCard() {
 function drawMoodChart() {
     if (moodChartInstance) moodChartInstance.destroy();
 
-    const moodEntries = allEntries.filter(e => e.type === 'mood' && e.timestamp);
+    const moodEntries = allTimelineEntries.filter(e => e.type === 'mood' && e.timestamp);
     if (moodEntries.length < 1) {
         // Jika tidak ada data, gambar chart kosong dengan pesan
         moodChartInstance = new Chart(moodChartCanvas, {
@@ -908,7 +953,7 @@ function drawMoodChart() {
 function drawActivityChart() {
     if (activityChartInstance) activityChartInstance.destroy();
 
-    const activities = allEntries.filter(e => e.type === 'activity');
+    const activities = allTimelineEntries.filter(e => e.type === 'activity');
     if (activities.length === 0) return;
 
     // ---- PALET WARNA UNTUK KATEGORI ----
@@ -976,7 +1021,7 @@ function drawDurationCategoryChart() {
         'Istirahat': { background: 'rgba(153, 102, 255, 0.8)' },
         'Lainnya': { background: 'rgba(201, 203, 207, 0.8)' }
     };
-
+    // LANGKAH 2: MENENTUKAN JANGKA WAKTU
     let chartTitle = '';
     let startDate;
 
@@ -988,17 +1033,17 @@ function drawDurationCategoryChart() {
         startDate = dayjs().subtract(29, 'days').startOf('day');
     }
 
-    // 1. Filter aktivitas yang selesai dalam rentang waktu yang dipilih
+    // LANGKAH 3: MENGUMPULKAN & MENYARING DATA
     const filteredActivities = allEntries.filter(e =>
         e.type === 'activity' &&
         e.extra.status === 'completed' &&
         e.timestamp &&
         dayjs(e.timestamp.toDate()).isAfter(startDate)
     );
+    
+    if (filteredActivities.length === 0) return;
 
-    if (filteredActivities.length === 0) return; // Jangan gambar jika kosong
-
-    // 2. Hitung total durasi untuk setiap kategori
+    // LANGKAH 4: MENGHITUNG TOTAL WAKTU PER KATEGORI
     const durationByCategory = filteredActivities.reduce((acc, entry) => {
         const category = entry.extra.category || 'Lainnya';
         const duration = entry.extra.duration || 0;
@@ -1006,6 +1051,7 @@ function drawDurationCategoryChart() {
         return acc;
     }, {});
 
+    // LANGKAH 5: MENYIAPKAN DATA UNTUK DIGAMBAR
     const labels = Object.keys(durationByCategory);
     const data = Object.values(durationByCategory);
     const backgroundColors = labels.map(label => CATEGORY_COLORS[label]?.background || CATEGORY_COLORS['Lainnya'].background);
