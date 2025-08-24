@@ -88,7 +88,7 @@ const topActivityContent = document.getElementById('top-activity-content');
 const ideaMoodContent = document.getElementById('idea-mood-content');
 const activityChartCanvas = document.getElementById('activity-chart');
 const moodChartCanvas = document.getElementById('mood-chart');
-
+const detailsContent = document.getElementById('detailsContent');
 // --- FUNGSI BARU UNTUK SINKRONISASI ---
 /**
  * FITUR: Sinkronisasi Data Offline ke Firestore
@@ -1545,4 +1545,5 @@ function renderTimeline() {
         timelineList.innerHTML += hourGroupHTML;
     }
     // --- AKHIR DARI BAGIAN YANG HILANG ---
+
 }
