@@ -88,7 +88,6 @@ const topActivityContent = document.getElementById('top-activity-content');
 const ideaMoodContent = document.getElementById('idea-mood-content');
 const activityChartCanvas = document.getElementById('activity-chart');
 const moodChartCanvas = document.getElementById('mood-chart');
-const detailsContent = document.getElementById('detailsContent');
 // --- FUNGSI BARU UNTUK SINKRONISASI ---
 /**
  * FITUR: Sinkronisasi Data Offline ke Firestore
@@ -783,26 +782,33 @@ function renderIdeaBoard() {
         document.getElementById(`idea-col-${status}`).innerHTML = '';
     });
 
-    // Menggunakan variabel allIdeas
     allIdeas.forEach(idea => {
         let status = idea.extra.status || 'pending';
         const deadline = idea.extra.deadline ? dayjs(idea.extra.deadline) : null;
 
-        // Logika: Jika deadline sudah lewat dan statusnya belum 'done',
-        // maka otomatis dianggap 'pending'.
         if (deadline && deadline.isBefore(dayjs(), 'day') && status !== 'done') {
             status = 'pending';
+        }
+
+        // Buat ringkasan detail langsung di sini
+        const details = [];
+        if (idea.extra.deadline) {
+            details.push(`Deadline: ${dayjs(idea.extra.deadline).format('D MMM YYYY')}`);
+        }
+        if (idea.extra.tags && idea.extra.tags.length > 0) {
+            details.push(`Tags: #${idea.extra.tags.join(', #')}`);
         }
 
         const ideaCardHTML = `
             <div class="idea-card" data-id="${idea.id}">
                 <h4 class="idea-card-title">${idea.content}</h4>
-                ${detailsContent.length > 0 ? `<p class="idea-card-details">${detailsContent.join('<br>')}</p>` : ''}
+                ${details.length > 0 ? `<p class="idea-card-details">${details.join('<br>')}</p>` : ''}
             </div>`;
 
         document.getElementById(`idea-col-${status}`).innerHTML += ideaCardHTML;
     });
 }
+
 
 function initializeSortable() {
     document.querySelectorAll('.idea-card-container').forEach(column => {
@@ -1547,3 +1553,4 @@ function renderTimeline() {
     // --- AKHIR DARI BAGIAN YANG HILANG ---
 
 }
+
