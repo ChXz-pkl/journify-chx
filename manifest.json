@@ -1,0 +1,21 @@
+{
+    "name": "Journify - Lacak Pola Harimu",
+    "short_name": "Journify",
+    "description": "Aplikasi jurnal cerdas untuk melacak mood, aktivitas, dan ide.",
+    "start_url": "/dashboard.html",
+    "display": "standalone",
+    "background_color": "#F0F2F5",
+    "theme_color": "#4a90e2",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/icon-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
+}

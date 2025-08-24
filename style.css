@@ -51,6 +51,72 @@ body {
     display: none !important;
 }
 
+/* style.css */
+
+/* ... (semua kode css yang sudah ada) ... */
+
+/* --- START: Penambahan Style Khusus untuk Halaman Landing --- */
+
+/* 1. Mengatur Layout Utama Halaman */
+.landing-page {
+    display: flex;
+    flex-direction: column; /* Menyusun elemen dari atas ke bawah */
+    min-height: 100vh;      /* Memastikan halaman mengisi tinggi layar penuh */
+}
+
+/* 2. Menata Header */
+.landing-header {
+    display: flex;
+    justify-content: space-between; /* Mendorong logo ke kiri & tombol ke kanan */
+    align-items: center;
+    padding: 1.5rem 3rem; /* Sedikit perbesar padding */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.landing-header .logo h1 {
+    font-size: 1.5rem; /* Sesuaikan ukuran font logo */
+}
+
+/* 3. Menata Konten Utama (Hero Section) */
+.hero-section {
+    flex-grow: 1; /* Ini kunci: membuat bagian ini mengisi ruang kosong & mendorong footer ke bawah */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Menengahkan konten secara vertikal */
+    align-items: center;     /* Menengahkan konten secara horizontal */
+    text-align: center;
+    padding: 2rem;
+}
+
+.hero-content {
+    max-width: 700px; /* Batasi lebar teks agar mudah dibaca */
+}
+
+.hero-content h1 {
+    font-size: 2.8rem; /* Perbesar judul utama */
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.hero-content p {
+    font-size: 1.1rem; /* Perbesar teks deskripsi */
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+/* 4. Menata Footer */
+footer {
+    padding: 1.5rem;
+    text-align: center;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+
+/* --- END: Penambahan Style Khusus untuk Halaman Landing --- */
 /* 2. Tombol & Elemen Umum */
 button {
     background-color: var(--accent-primary);
@@ -91,6 +157,38 @@ button:hover {
 .btn-danger:hover {
     background-color: #a71d2a;
 }
+
+/* style.css */
+
+/* ... (semua kode css yang sudah ada) ... */
+
+/* --- START: Perbaikan Style Tombol di Halaman Landing --- */
+
+/* Menargetkan link (<a>) yang diberi kelas .btn-primary */
+.landing-page a.btn-primary {
+    display: inline-block; /* Agar bisa diberi padding */
+    text-decoration: none; /* Menghilangkan garis bawah */
+    padding: 0.8rem 2rem;  /* Atur padding agar lebih besar */
+    border-radius: 8px;    /* Membuat sudut lebih membulat */
+    font-weight: 600;      /* Menebalkan teks */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animasi halus */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Tambahkan sedikit bayangan */
+}
+
+/* Efek saat kursor mouse di atas tombol */
+.landing-page a.btn-primary:hover {
+    transform: translateY(-2px); /* Sedikit terangkat saat disentuh */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Khusus untuk tombol di header agar sedikit lebih kecil */
+.landing-header a.btn-primary {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+
+/* --- END: Perbaikan Style Tombol di Halaman Landing --- */
 
 input,
 select,

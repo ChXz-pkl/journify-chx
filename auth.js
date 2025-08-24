@@ -1,6 +1,8 @@
 // auth.js
+// Deskripsi: File ini menangani semua logika autentikasi pengguna,
+// termasuk pendaftaran, login, dan pengalihan halaman.
 
-// 1. IMPORTS
+// 1. IMPORTS DARI FIREBASE SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
     getAuth,
@@ -10,7 +12,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 2. FIREBASE CONFIG & INIT (Ganti dengan konfigurasimu!)
+// 2. KONFIGURASI & INISIALISASI FIREBASE
+// NOTE: Ganti dengan konfigurasi Firebase proyek Anda.
 const firebaseConfig = {
     apiKey: "AIzaSyAd-Ln8l9WyOqaGEwipvXSFkimjFR6RjI8",
     authDomain: "journify-chx.firebaseapp.com",
@@ -19,13 +22,13 @@ const firebaseConfig = {
     messagingSenderId: "527828409650",
     appId: "1:527828409650:web:1a1e659850f4c4a412cb2b",
     measurementId: "G-9EB83J1XN7"
-  };
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// 3. DOM ELEMENTS
+// 3. SELEKSI ELEMEN DOM
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
 const loginError = document.getElementById('login-error');
@@ -35,15 +38,23 @@ const showLoginLink = document.getElementById('show-login-link');
 const authSwitcher = document.getElementById('auth-switcher');
 const authSwitcherLogin = document.getElementById('auth-switcher-login');
 
-// 4. AUTH STATE CHECKER
-// Jika pengguna sudah login, langsung arahkan ke dashboard.
+// 4. LOGIKA UTAMA
+/**
+ * FITUR: Pengecekan Status Autentikasi
+ * Deskripsi: Listener ini memantau status login pengguna. Jika pengguna terdeteksi
+ * sudah login, ia akan otomatis dialihkan ke halaman dashboard.
+ */
 onAuthStateChanged(auth, (user) => {
     if (user) {
         window.location.href = 'dashboard.html';
     }
 });
 
-// 5. EVENT LISTENERS
+/**
+ * FITUR: Penanganan Login Pengguna
+ * Deskripsi: Menerima input email dan password dari form login, lalu mencoba
+ * untuk masuk menggunakan Firebase Auth.
+ */
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginError.textContent = '';
@@ -51,12 +62,17 @@ loginForm.addEventListener('submit', async (e) => {
     const password = loginForm.querySelector('#login-password').value;
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged akan menangani navigasi
+        // Navigasi akan ditangani oleh onAuthStateChanged
     } catch (error) {
-        loginError.textContent = "Gagal masuk: Email atau password salah.";
+        loginError.textContent = "Email atau password salah. Silakan coba lagi.";
     }
 });
 
+/**
+ * FITUR: Penanganan Registrasi Pengguna Baru
+ * Deskripsi: Mendaftarkan pengguna baru dan membuat dokumen profil
+ * untuk mereka di Firestore.
+ */
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     registerError.textContent = '';
@@ -66,20 +82,30 @@ registerForm.addEventListener('submit', async (e) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Buat dokumen pengguna baru di Firestore
+        // --- BAGIAN KRUSIAL ADA DI SINI ---
+        // Pastikan kode ini berjalan tanpa error
         const userDocRef = doc(db, "users", user.uid);
         await setDoc(userDocRef, {
-            displayName: user.email.split('@')[0], // Nama default dari email
+            displayName: user.email.split('@')[0],
             email: user.email,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            isNewUser: true // Ini yang memicu onboarding
         });
-        // onAuthStateChanged akan menangani navigasi
+        // Navigasi akan ditangani oleh onAuthStateChanged
     } catch (error) {
-        registerError.textContent = "Gagal mendaftar: " + error.message;
+        if (error.code === 'auth/email-already-in-use') {
+            registerError.textContent = "Email ini sudah terdaftar. Silakan login.";
+        } else {
+            registerError.textContent = "Gagal mendaftar. Pastikan password minimal 6 karakter.";
+        }
     }
 });
 
-// Logika untuk beralih antara form login dan register
+/**
+ * FITUR: Pengalih Form
+ * Deskripsi: Mengatur logika untuk menampilkan form login atau register
+ * berdasarkan interaksi pengguna.
+ */
 showRegisterLink.addEventListener('click', (e) => {
     e.preventDefault();
     loginForm.classList.add('hidden');

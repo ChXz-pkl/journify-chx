@@ -3,22 +3,27 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="manifest" href="manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Journify - Dashboard</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" />
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrAfter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/weekOfYear.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrBefore.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdn.tiny.cloud/1/tmkn3fjkqruhxrxzucgpa2cmmd33kveh6xqfta2nqc1aopvv/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 </head>
 
@@ -109,7 +114,7 @@
                         placeholder="Klik 'Buat Laporan' untuk membuat ringkasan harimu..." rows="10"
                         readonly></textarea>
                     <div class="text-utility-actions">
-                        <button id="process-text-btn">Buat Laporan</button>
+                        <button id="process-text-btn">Rangkum Hariku</button>
                         <button id="copy-text-btn" class="btn-secondary">Salin Laporan</button>
                     </div>
                 </div>
@@ -214,7 +219,8 @@
             </div>
         </div>
     </div>
-
+    
+    <script type="module" src="onboarding.js"></script>
     <script type="module" src="main.js"></script>
 </body>
 
